@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Product Service</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('button.delete-btn').click(function(e) {
+                e.preventDefault();
+                var productId = $(this).data('product-id');
+                $.ajax({
+                    url: '/products/' + productId + '/delete',
+                    type: 'POST',
+                    success: function(response) {
+                        // Handle success response (if needed)
+                        console.log(response.message);
+                        // Update the UI or perform other actions as necessary
+                    },
+                    error: function(error) {
+                        // Handle error response (if needed)
+                        console.error('Error:', error);
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <header>
+        <h1>Order Service Navigation</h1>
+        <nav>
+            <ul>
+                <li><a href="http://localhost:5000/">User Service</a></li>
+                <li><a href="http://localhost:5001/">Product Service</a></li>
+                <li><a href="http://localhost:5002/">Order Service</a></li>
+                <li><a href="http://localhost:5003/">Payment Service</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h2>Welcome to the Product Service!</h2>
+        <!-- Your Order Service specific content goes here -->
+    </main>
+
+    <h1>Add Product</h1>
+    <form action="/products" method="POST" id="addProductForm">
+        <label for="productName">Product Name:</label>
+        <input type="text" id="productName" name="productName" required><br><br>
+
+        <label for="description">Description:</label>
+        <input type="text" id="description" name="description" required><br><br>
+
+        <label for="price">Price:</label>
+        <input type="number" id="price" name="price" step="0.01" required><br><br>
+
+        <label for="quantity">Quantity:</label>
+        <input type="number" id="quantity" name="quantity" required><br><br>
+
+        <input type="submit" value="Add Product">
+    </form>
+
+    <h2>Products</h2>
+    <table>
+        <tr>
+            <th>Product Name</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Actions</th>
+        </tr>
+        {% for product in products %}
+        <tr>
+            <td>{{ product.name }}</td>
+            <td>{{ product.description }}</td>
+            <td>{{ product.price }}</td>
+            <td>{{ product.quantity }}</td>
+            <td>
+                <form action="{{ url_for('update_product', product_id=product.id) }}" method="post">
+                    <button type="submit">Update</button>
+                </form>
+                <button class="delete-btn" data-product-id="{{ product.id }}">Delete</button>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <script>
+        // Function to add a new product
+        function addProduct() {
+            const productName = document.getElementById('productName').value;
+            const description = document.getElementById('description').value;
+            const price = document.getElementById('price').value;
+            const quantity = document.getElementById('quantity').value;
+
+            // Send POST request to add a new product
+            fetch('/products', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    productName: productName,
+                    description: description,
+                    price: price,
+                    quantity: quantity
+                })
+            })
+                .then(response => {
+                    if (response.ok) {
+                        // Reload the page after successful addition (or update the table dynamically)
+                        window.location.reload();
+                    } else {
+                        throw new Error('Failed to add product');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to add product');
+                });
+        }
+        // Function to update a product by ID
+        function updateProduct(productId) {
+            // Get updated product details from user input (example: using prompts or forms)
+            const updatedProductName = prompt('Enter updated product name:');
+            const updatedDescription = prompt('Enter updated description:');
+            const updatedPrice = prompt('Enter updated price:');
+            const updatedQuantity = prompt('Enter updated quantity:');
+
+            // Send PUT request to update product details
+            fetch(`/products/${productId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    productName: updatedProductName,
+                    description: updatedDescription,
+                    price: updatedPrice,
+                    quantity: updatedQuantity
+                })
+            })
+                .then(response => {
+                    if (response.ok) {
+                        // Reload the page after successful update (or update the table dynamically)
+                        window.location.reload();
+                    } else {
+                        throw new Error('Failed to update product');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to update product');
+                });
+        }
+        // Function to delete a product by ID
+        function deleteProduct(productId) {
+            // Send DELETE request to delete product
+            fetch(`/products/${productId}`, {
+                method: 'DELETE'
+            })
+                .then(response => {
+                    if (response.ok) {
+                        // Reload the page after successful deletion (or update the table dynamically)
+                        window.location.reload();
+                    } else {
+                        throw new Error('Failed to delete product');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to delete product');
+                });
+        }
+        // Add event listeners to handle update and delete actions
+        document.addEventListener('DOMContentLoaded', function () {
+            // Update product event listeners
+            const updateButtons = document.querySelectorAll('.update-btn');
+            updateButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const productId = this.getAttribute('data-product-id');
+                    updateProduct(productId);
+                });
+            });
+            // Add product form submission listener
+            const addProductForm = document.getElementById('addProductForm');
+            addProductForm.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent the default form submission
+                addProduct(); // Call the function to add a product
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,63 @@
+Introduction
+
+Dans le cadre de ce devoir, notre objectif était de concevoir un système de commerce électronique basé sur des microservices, utilisant Docker et Docker Compose pour orchestrer ces services de manière efficace. Chaque microservice est dédié à une fonction spécifique de la plateforme de commerce électronique.
+
+Architecture du Système
+
+Le système a été divisé en plusieurs microservices, chaque service  joue un rôle crucial dans le fonctionnement de la plateforme. Voici une brève description de chaque microservice :
+
+    Service Utilisateur :
+        Gère l'inscription des utilisateurs, l'authentification et les informations de profil.
+        Expose une API sur le port 5000.
+
+    Service Produit :
+        Gère le catalogue des produits et les niveaux de stock.
+        Expose une API sur le port 5001.
+
+    Service Commande :
+        Gère le processus de commande, y compris les paniers d'achat et l'historique des commandes.
+        Expose une API sur le port 5002.
+
+    Service Paiement :
+        S'occupe du traitement des paiements pour les commandes terminées.
+        Expose une API sur le port 5003.
+
+    Passerelle API (Traefik) :
+        Sert de point d'entrée pour les demandes externes et les route vers les microservices appropriés.
+       
+        
+    racine-du-projet/
+│
+├── service-utilisateur/
+│   ├── Dockerfile
+│   ├── app.py
+│   └── templates
+│
+├── service-produit/
+│   ├── Dockerfile
+│   ├── app.py
+│   └── templates
+    └── product.db
+│
+├── service-commande/
+│   ├── Dockerfile
+│   ├── app.py
+│   └── templates
+    
+│
+├── service-paiement/
+│   ├── Dockerfile
+│   ├── app.py
+│   └── templates
+│
+├── passerelle-api/
+│   ├── Dockerfile
+│   ├── config.yml
+│   └── 
+│
+└── docker-compose.yml    
+
+Comment ca marche ?
+
+Dans le terminal, acceder au repertoire racine et faire la commande docker compose up - -build pour construire, (re)créer ou démarrer les services
+

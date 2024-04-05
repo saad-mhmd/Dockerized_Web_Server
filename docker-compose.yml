@@ -1,0 +1,42 @@
+version: '3'
+services:
+  user-service:
+    build: ./user-service
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./user-service:/app
+      - ./user-service/templates:/app/templates  # Mount templates directory
+
+  product-service:
+    build: ./product-service
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./product-service:/app
+      - ./product-service/templates:/app/templates  # Mount templates directory
+
+  order-service:
+    build: ./order-service
+    ports:
+      - "5002:5002"
+    volumes:
+      - ./order-service:/app
+      - ./order-service/templates:/app/templates  # Mount templates directory
+
+  payment-service:
+    build: ./payment-service
+    ports:
+      - "5003:5003"
+    volumes:
+      - ./payment-service:/app
+      - ./payment-service/templates:/app/templates  # Mount templates directory
+
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "80:80"
+    labels:
+      - "traefik.http.routers.api-gateway.rule=Host(`api-gateway.localhost`)"
+      - "traefik.http.routers.api-gateway.entrypoints=web"
+      
